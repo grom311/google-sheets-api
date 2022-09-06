@@ -1,0 +1,42 @@
+version: '3.7'
+services:
+  app:
+    build: ./app
+    container_name: app
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      DB_PORT: postgres
+      RESTART_TIME_SECONDS: 4
+      SPREADSHEET_ID: '1Ix4EINGShspfUMEEROWe0c90kS0xGxUCYYSNYVuu8uI'
+  postgres:
+      container_name: postgres_container
+      image: postgres
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: admin
+        DB_PORT: postgres
+        PGDATA: "/data/postgres"
+      volumes:
+        - postgres:/data/postgres
+      ports:
+        - "15432:5432"
+      restart: unless-stopped
+
+  pgadmin:
+    container_name: demo_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    volumes:
+       - pgadmin:/var/lib/pgadmin
+    ports:
+      - "15433:80"
+    restart: unless-stopped
+
+volumes:
+    postgres:
+    pgadmin:
