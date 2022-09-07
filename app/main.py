@@ -45,7 +45,6 @@ def get_sheet_values(service, spreadsheet_id):
     sheet_metadata = service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
 
     properties = sheet_metadata.get("sheets")
-    pprint(properties)
     # read file
     values = (
         service.spreadsheets()
@@ -66,7 +65,7 @@ def df_to_db(engine, values, curr_usd):
     """
     df = pd.DataFrame(data=values[1:], columns=values[0])
     df = df.astype({"стоимость,$": float})
-    # возможно нужно брать курс доллара по дате заказа???
+    # возможно нужно брать курс доллара по дате заказа
     # сейчас беру на текущий день
     df["стоимость,руб"] = df["стоимость,$"] * curr_usd
 
@@ -82,27 +81,33 @@ def dollar_exchange_rate():
     root = ET.fromstring(currency_nb.text)
     curr_usd = root.find("./Valute[NumCode='840']/Value").text
     curr_usd = float(curr_usd.replace(",", "."))
-    print(f"curr_usd: {curr_usd}")
     return curr_usd
 
 
 def delivery_check(values):
+    """
+        Method check date delivery, 
+        if date delivery < today - send message to telegram bot,
+        save order number in redis. 
+        Send message obout order number only once.
+    """
+    # create dataFrame for values from Google Sheet
     df = pd.DataFrame(data=values[1:], columns=values[0])
-    # df['срок поставки'] = pd.to_datetime(df['срок поставки'])
     date_format = "%d.%m.%Y"
-    today = datetime.strptime(str(date.today()), "%Y-%m-%d")
+    dt_now = datetime.now()
     redis_get = json.loads(redis_conn.get('order_number'))
     list_order = []
     for _, row in df.iterrows():
-        try:
-            delivery_date = datetime.strptime(str(row['срок поставки']), date_format)
-            day = (today-delivery_date).days
-            if day > 0 and row['заказ №'] not in redis_get:
-                text = f"Срок поставки заказа №: {row['заказ №']}, просрочен."
-                list_order.append(row['заказ №'])
-                bot.send_message(CHAT_ID, text)
-        except ValueError:
-            print("Not all fields are filled.")
+        if row['заказ №'] not in redis_get:
+            try:
+                delivery_date = datetime.strptime(str(row['срок поставки']), date_format)
+                delivery_datetime = datetime(delivery_date.year, delivery_date.month, delivery_date.day)
+                if dt_now > delivery_datetime:
+                    text = f"Срок поставки заказа №: {row['заказ №']}, просрочен."
+                    list_order.append(row['заказ №'])
+                    bot.send_message(CHAT_ID, text)
+            except ValueError:
+                print("Not all fields are filled.")
     redis_conn.set('order_number', json.dumps(list_order+redis_get))
 
 
@@ -115,7 +120,7 @@ if __name__ == "__main__":
             curr_usd = dollar_exchange_rate()
         values = get_sheet_values(service, SPREADSHEET_ID)
         delivery_check(values.get("values"))
-        db_bool = df_to_db(engine, values.get("values"), curr_usd)
+        df_to_db(engine, values.get("values"), curr_usd)
         cnt += 1
-        pprint(f"cnt: {cnt}")
+        pprint(f"number run: {cnt}")
         time.sleep(RESTART_TIME_SECONDS)
