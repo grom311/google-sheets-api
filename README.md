@@ -1,7 +1,7 @@
 # google-sheets-api
 
 # credentials  
-creds.json - файл с креденшиалами с гугл апи, нужно положить в папку app.
+creds.json - файл с креденшиалами с гугл апи, нужно положить в папку app, сейчас подложены мои креды.
 
 My Google sheet:
 https://docs.google.com/spreadsheets/d/1Ix4EINGShspfUMEEROWe0c90kS0xGxUCYYSNYVuu8uI/edit#gid=0  
@@ -22,4 +22,4 @@ Password - POSTGRES_PASSWORD
 Для отправки сообщения о просроченной доставки в телеграмм необходио:  
 TOKEN:  
 CHAT_ID:  
-Получить токен и чат ид телеграм бота.  
+Получить токен и чат ид Вашего телеграм бота.  
