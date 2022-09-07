@@ -1,5 +1,10 @@
 version: '3.7'
 services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
   app:
     build: ./app
     container_name: app
@@ -9,6 +14,16 @@ services:
       DB_PORT: postgres
       RESTART_TIME_SECONDS: 4
       SPREADSHEET_ID: '1Ix4EINGShspfUMEEROWe0c90kS0xGxUCYYSNYVuu8uI'
+      TOKEN: 
+      CHAT_ID: 
+      REDIS_HOST: 'redis'
+      REDIS_PORT: '6379'
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    links: 
+        - postgres
   postgres:
       container_name: postgres_container
       image: postgres

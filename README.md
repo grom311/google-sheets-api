@@ -13,3 +13,9 @@ Name - любое
 Host Name - DB_PORT
 Username - POSTGRES_USER
 Password - POSTGRES_PASSWORD
+
+
+Для отправки сообщения о просроченной доставки в телеграмм необходио:  
+TOKEN: 
+CHAT_ID: 
+Получить токен и чат ид телеграм бота.  
