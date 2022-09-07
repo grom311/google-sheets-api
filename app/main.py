@@ -18,11 +18,11 @@ from settings import (CHAT_ID, DB_PORT, POSTGRES_PASSWORD, POSTGRES_USER,
 from sqlalchemy import create_engine
 
 # Файл, полученный в Google Developer Console
-CREDENTIALS_FILE = f"creds.json" if os.path.exists("creds.json") else f"app/creds.json"
+credentials_file = f"creds.json" if os.path.exists("creds.json") else f"app/creds.json"
 
 # Авторизуемся и получаем service — экземпляр доступа к API
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    CREDENTIALS_FILE,
+    credentials_file,
     [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive",

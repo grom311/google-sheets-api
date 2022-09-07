@@ -1,5 +1,8 @@
 # google-sheets-api
 
+# credentials
+creds.json - файл с креденшиалами с гугл апи, нужно положить в папку app.
+
 My Google sheet:
 https://docs.google.com/spreadsheets/d/1Ix4EINGShspfUMEEROWe0c90kS0xGxUCYYSNYVuu8uI/edit#gid=0  
 SPREADSHEET_ID=1Ix4EINGShspfUMEEROWe0c90kS0xGxUCYYSNYVuu8uI  
