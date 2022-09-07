@@ -12,7 +12,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
       DB_PORT: postgres
-      RESTART_TIME_SECONDS: 4
+      TIME_SLEEP_SECONDS: 5
       SPREADSHEET_ID: '1Ix4EINGShspfUMEEROWe0c90kS0xGxUCYYSNYVuu8uI'
       TOKEN: 
       CHAT_ID: 

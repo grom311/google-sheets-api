@@ -13,7 +13,7 @@ import requests
 import telebot
 from oauth2client.service_account import ServiceAccountCredentials
 from settings import (CHAT_ID, DB_PORT, POSTGRES_PASSWORD, POSTGRES_USER,
-                      REDIS_HOST, REDIS_PORT, RESTART_TIME_SECONDS,
+                      REDIS_HOST, REDIS_PORT, TIME_SLEEP_SECONDS,
                       SPREADSHEET_ID, TOKEN)
 from sqlalchemy import create_engine
 
@@ -104,10 +104,12 @@ def delivery_check(values):
                 delivery_datetime = datetime(delivery_date.year, delivery_date.month, delivery_date.day)
                 if dt_now > delivery_datetime:
                     text = f"Срок поставки заказа №: {row['заказ №']}, просрочен."
-                    list_order.append(row['заказ №'])
                     bot.send_message(CHAT_ID, text)
+                    list_order.append(row['заказ №'])
             except ValueError:
                 print("Not all fields are filled.")
+            except Exception as exc:
+                print(exc)
     redis_conn.set('order_number', json.dumps(list_order+redis_get))
 
 
@@ -115,12 +117,16 @@ if __name__ == "__main__":
     curr_usd = dollar_exchange_rate()
     cnt = 0
     today = date.today()
+    check_bot = requests.get(f'https://api.telegram.org/bot{TOKEN}/getUpdates')
     while True:
         if today != date.today():
             curr_usd = dollar_exchange_rate()
         values = get_sheet_values(service, SPREADSHEET_ID)
-        delivery_check(values.get("values"))
+        if check_bot.status_code == 200:
+            delivery_check(values.get("values"))
+        else:
+            print('YourBOTToken is not correct or empty, please check environment TOKEN.')
         df_to_db(engine, values.get("values"), curr_usd)
         cnt += 1
         pprint(f"number run: {cnt}")
-        time.sleep(RESTART_TIME_SECONDS)
+        time.sleep(TIME_SLEEP_SECONDS)

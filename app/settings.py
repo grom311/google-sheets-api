@@ -7,7 +7,7 @@ POSTGRES_USER=os.getenv('POSTGRES_USER')
 POSTGRES_PASSWORD=os.getenv('POSTGRES_PASSWORD')
 DB_PORT=os.getenv('DB_PORT')
 SPREADSHEET_ID=os.getenv('SPREADSHEET_ID')
-RESTART_TIME_SECONDS=int(os.getenv('RESTART_TIME_SECONDS', 5))
+TIME_SLEEP_SECONDS=int(os.getenv('TIME_SLEEP_SECONDS', 5))
 
 # telegram bot parameters
 TOKEN = os.environ.get("TOKEN")
